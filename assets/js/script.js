@@ -1,9 +1,6 @@
 const today = luxon.DateTime.now();
 $("#currentDay").text(today.toLocaleString());
 
-function test(event) {
-  // find focused element
-}
 function addEvent() {
   const currentText = $(this).text();
   console.log(currentText);
@@ -53,10 +50,6 @@ function saveEvent(event) {
   currentTasks.push(newTask);
   localStorage.setItem("tasks", JSON.stringify(currentTasks));
 }
-// turn the event into a paragraph or something
-// get local storage
-// If it's in there, overwrite
-//If it's not, add it
 
 const timeBlocksContainer = $(".time-blocks-container");
 timeBlocksContainer.on("click", ".eventblock", addEvent);
@@ -72,4 +65,28 @@ function loadTasks() {
     }
   }
 }
+
+function assignColors() {
+  const hoursArr = [
+    "9AM",
+    "10AM",
+    "11AM",
+    "12PM",
+    "1PM",
+    "2PM",
+    "3PM",
+    "4PM",
+    "5PM",
+  ];
+  const today2 = luxon.DateTime.fromISO(today);
+  const amOrPm = today2.hour > 11 ? "P" : "A";
+  let finalTime = `${today2.toFormat("h")}${amOrPm}M`;
+  let justHourTime = finalTime.split(":")[0];
+  for (hour of hoursArr) {
+    // if the index is lower than the index of finalTime, it should be gray
+    // if the index is equal, it should be red
+    //if it's higher, it should be green
+  }
+}
 loadTasks();
+assignColors();
