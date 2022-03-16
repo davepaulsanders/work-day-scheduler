@@ -5,8 +5,12 @@ function test(event) {
   // find focused element
 }
 function addEvent() {
+  const currentText = $(this).text();
+  console.log(currentText);
   $(this).replaceWith(
-    "<textarea onblur = 'test()'class='task m-0 bg-success col-9'></textarea>"
+    "<textarea class='task m-0 bg-success col-9' maxlength='100'>" +
+      currentText +
+      "</textarea>"
   );
   $(".task").focus();
 }
@@ -16,7 +20,7 @@ function addEvent() {
 function saveEvent(event) {
   const eventBlock = $(this).siblings(".task");
   const hour = $(this).siblings(".hour").text();
-  const task = eventBlock.val();
+  const task = eventBlock.val().trim();
 
   eventBlock.replaceWith(
     "<div class = 'col-12 d-flex justify-content-left align-items-center col-md-9 bg-success eventblock'>" +
@@ -59,3 +63,13 @@ timeBlocksContainer.on("click", ".eventblock", addEvent);
 //timeBlocksContainer.on("blur", ".task", test);
 const saveButton = $(".btn");
 saveButton.on("click", saveEvent);
+
+function loadTasks() {
+  const savedTasks = JSON.parse(localStorage.getItem("tasks"));
+  for (obj in savedTasks) {
+    if ($(".block-" + savedTasks[obj].hour)) {
+      $(".block-" + savedTasks[obj].hour).text(savedTasks[obj].task);
+    }
+  }
+}
+loadTasks();
