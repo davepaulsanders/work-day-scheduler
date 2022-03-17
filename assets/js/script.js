@@ -51,12 +51,15 @@ function saveEvent() {
 }
 
 function loadTasks() {
-  const savedTasks = JSON.parse(localStorage.getItem("tasks"));
-  for (obj in savedTasks) {
-    if ($(".block-" + savedTasks[obj].hour)) {
-      $(".block-" + savedTasks[obj].hour).text(savedTasks[obj].task);
+  const taskInterval = setInterval(() => {
+    console.log("updating...");
+    const savedTasks = JSON.parse(localStorage.getItem("tasks"));
+    for (obj in savedTasks) {
+      if ($(".block-" + savedTasks[obj].hour)) {
+        $(".block-" + savedTasks[obj].hour).text(savedTasks[obj].task);
+      }
     }
-  }
+  }, 600000);
 }
 
 function assignColors() {
