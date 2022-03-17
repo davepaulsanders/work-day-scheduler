@@ -4,13 +4,15 @@ $("#currentDay").text(today.toLocaleString());
 
 // event listeners and global objects
 const timeBlocksContainer = $(".time-blocks-container");
-//timeBlocksContainer.on("mousedown", ".eventblock", editEvent);
+timeBlocksContainer.on("mousedown", ".eventblock", editEvent);
 const saveButton = $(".btn");
 saveButton.on("click", saveEvent);
 // initial time set up
+
 function getTime() {
-  const today2 = luxon.DateTime.fromISO(today);
-  const amOrPm = today2.hour > 11 ? "P" : "A";
+  let time = luxon.DateTime.now();
+  let today2 = luxon.DateTime.fromISO(time);
+  let amOrPm = today2.hour > 11 ? "P" : "A";
   let displayTime = `${today2.toFormat("h:mm")} ${amOrPm}M`;
   let finalTime = `${today2.toFormat("h")}${amOrPm}M`;
   $("#currentTime").text(displayTime);
@@ -20,7 +22,7 @@ function getTime() {
 function timeCall() {
   const timeInterval = setInterval(() => {
     getTime();
-  }, 60000);
+  }, 10000);
 }
 
 // Loads tasks from localStorage
