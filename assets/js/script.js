@@ -104,7 +104,7 @@ function assignColors() {
 }
 
 const timeBlocksContainer = $(".time-blocks-container");
-timeBlocksContainer.on("click", ".eventblock", editEvent);
+timeBlocksContainer.on("mousedown", ".eventblock", editEvent);
 const text = $(".eventblock");
 
 const saveButton = $(".btn");
