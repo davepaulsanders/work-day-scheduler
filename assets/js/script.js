@@ -110,8 +110,8 @@ function assignColors() {
   ];
   const today2 = luxon.DateTime.fromISO(today);
   const amOrPm = today2.hour > 11 ? "P" : "A";
-  //let finalTime = `${today2.toFormat("h")}${amOrPm}M`;
-  let finalTime = "5PM";
+  let finalTime = `${today2.toFormat("h")}${amOrPm}M`;
+
   for (hour of hoursArr) {
     if (hoursArr.indexOf(hour) === hoursArr.indexOf(finalTime)) {
       $(".block-" + hour).addClass("red");
@@ -122,19 +122,8 @@ function assignColors() {
     }
   }
 }
-
-timeBlocksContainer.on("blur", ".task", function () {
-  const currentColor = colorClass($(this));
-  const classText = "block-" + $(this).siblings("div").text();
-  $(this).replaceWith(
-    "<div class = 'col-12 d-flex task justify-content-left align-items-center col-md-9 eventblock " +
-      currentColor +
-      " " +
-      classText +
-      "'>" +
-      "</div>"
-  );
-  loadTasks();
+timeBlocksContainer.on("blur", () => {
+  $(this).removeClass("bg-white");
   assignColors();
 });
 assignColors();
