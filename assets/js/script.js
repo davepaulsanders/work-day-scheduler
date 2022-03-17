@@ -1,5 +1,4 @@
 const today = luxon.DateTime.now();
-let focusedEl;
 $("#currentDay").text(today.toLocaleString());
 function editEvent(event) {
   const currentText = $(this).text();
@@ -9,13 +8,12 @@ function editEvent(event) {
     return;
   }
   $(this).replaceWith(
-    "<textarea autofocus spellcheck='false' class='" +
+    "<textarea spellcheck='false' class='" +
       classes +
       "'>" +
       currentText +
       "</textarea>"
   );
-  $(".eventblock").focus();
 }
 
 function saveEvent() {
@@ -106,9 +104,16 @@ function assignColors() {
 const timeBlocksContainer = $(".time-blocks-container");
 timeBlocksContainer.on("mousedown", ".eventblock", editEvent);
 const text = $(".eventblock");
-
 const saveButton = $(".btn");
 saveButton.on("click", saveEvent);
 
 assignColors();
 loadTasks();
+
+document.addEventListener(
+  "focus",
+  function () {
+    console.log("focused: ", document.activeElement);
+  },
+  true
+);
