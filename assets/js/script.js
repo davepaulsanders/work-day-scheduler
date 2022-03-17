@@ -3,24 +3,38 @@ $("#currentDay").text(today.toLocaleString());
 
 function addEvent() {
   const currentText = $(this).text();
-  console.log(currentText);
+  const currentColor = colorClass($(this));
   $(this).replaceWith(
-    "<textarea class='task m-0 bg-success col-9' maxlength='100'>" +
+    "<textarea class='task bg-white task m-0 d-flex justify-content-left align-items-center col-9 " +
+      currentColor +
+      "' maxlength='100'>" +
       currentText +
       "</textarea>"
   );
   $(".task").focus();
 }
 
-// If the user leaves the block without saving task, empty block
+function colorClass(block) {
+  if ($(this).hasClass("green")) {
+    return "green";
+  } else if ($(this).hasClass("red")) {
+    return "red";
+  } else {
+    return "gray";
+  }
+}
 
-function saveEvent(event) {
+function saveEvent() {
   const eventBlock = $(this).siblings(".task");
   const hour = $(this).siblings(".hour").text();
-  const task = eventBlock.val().trim();
-
+  console.log(hour);
+  const task = eventBlock.val();
+  console.log(task);
+  const currentColor = colorClass($(this));
   eventBlock.replaceWith(
-    "<div class = 'col-12 d-flex justify-content-left align-items-center col-md-9 bg-success eventblock'>" +
+    "<div class = 'col-12 d-flex justify-content-left align-items-center col-md-9 eventblock " +
+      currentColor +
+      "'>" +
       task +
       "</div>"
   );
@@ -49,11 +63,12 @@ function saveEvent(event) {
   }
   currentTasks.push(newTask);
   localStorage.setItem("tasks", JSON.stringify(currentTasks));
+  assignColors();
 }
 
 const timeBlocksContainer = $(".time-blocks-container");
 timeBlocksContainer.on("click", ".eventblock", addEvent);
-//timeBlocksContainer.on("blur", ".task", test);
+
 const saveButton = $(".btn");
 saveButton.on("click", saveEvent);
 
@@ -68,6 +83,15 @@ function loadTasks() {
 
 function assignColors() {
   const hoursArr = [
+    "12AM",
+    "1AM",
+    "2AM",
+    "3AM",
+    "4AM",
+    "5AM",
+    "6AM",
+    "7AM",
+    "8AM",
     "9AM",
     "10AM",
     "11AM",
@@ -77,16 +101,41 @@ function assignColors() {
     "3PM",
     "4PM",
     "5PM",
+    "6PM",
+    "7PM",
+    "8PM",
+    "9PM",
+    "10PM",
+    "11PM",
   ];
   const today2 = luxon.DateTime.fromISO(today);
   const amOrPm = today2.hour > 11 ? "P" : "A";
-  let finalTime = `${today2.toFormat("h")}${amOrPm}M`;
-  let justHourTime = finalTime.split(":")[0];
+  //let finalTime = `${today2.toFormat("h")}${amOrPm}M`;
+  let finalTime = "5PM";
   for (hour of hoursArr) {
-    // if the index is lower than the index of finalTime, it should be gray
-    // if the index is equal, it should be red
-    //if it's higher, it should be green
+    if (hoursArr.indexOf(hour) === hoursArr.indexOf(finalTime)) {
+      $(".block-" + hour).addClass("red");
+    } else if (hoursArr.indexOf(hour) < hoursArr.indexOf(finalTime)) {
+      $(".block-" + hour).addClass("gray");
+    } else {
+      $(".block-" + hour).addClass("green");
+    }
   }
 }
-loadTasks();
+
+timeBlocksContainer.on("blur", ".task", function () {
+  const currentColor = colorClass($(this));
+  const classText = "block-" + $(this).siblings("div").text();
+  $(this).replaceWith(
+    "<div class = 'col-12 d-flex task justify-content-left align-items-center col-md-9 eventblock " +
+      currentColor +
+      " " +
+      classText +
+      "'>" +
+      "</div>"
+  );
+  loadTasks();
+  assignColors();
+});
 assignColors();
+loadTasks();
