@@ -1,41 +1,29 @@
 const today = luxon.DateTime.now();
+let focusedEl;
 $("#currentDay").text(today.toLocaleString());
-function getHourClass() {}
-function editEvent() {
+function editEvent(event) {
   const currentText = $(this).text();
   const classes = $(this).attr("class");
-  console.log(
-    "<textarea class='" + classes + "' " + currentText + "</textarea>"
-  );
+
+  if ($(this).is("textarea")) {
+    return;
+  }
   $(this).replaceWith(
-    "<textarea class='" + classes + "'>" + currentText + "</textarea>"
+    "<textarea autofocus spellcheck='false' class='" +
+      classes +
+      "'>" +
+      currentText +
+      "</textarea>"
   );
   $(".eventblock").focus();
 }
 
-function colorClass(block) {
-  if ($(this).hasClass("green")) {
-    return "green";
-  } else if ($(this).hasClass("red")) {
-    return "red";
-  } else {
-    return "gray";
-  }
-}
 function saveEvent() {
-  const eventBlock = $(this).siblings(".task");
+  const eventBlock = $(this).siblings(".eventblock");
+  const task = eventBlock.val().trim();
   const hour = $(this).siblings(".hour").text();
-  console.log(hour);
-  const task = eventBlock.val();
-  console.log(task);
-  const currentColor = colorClass($(this));
-  eventBlock.replaceWith(
-    "<div class = 'col-12 d-flex justify-content-left align-items-center col-md-9 eventblock " +
-      currentColor +
-      "'>" +
-      task +
-      "</div>"
-  );
+  const classes = eventBlock.attr("class");
+  eventBlock.replaceWith("<div class='" + classes + "'>" + task + "</div>");
 
   const newTask = {
     hour,
@@ -115,18 +103,11 @@ function assignColors() {
   }
 }
 
-function normalizeEvent() {
-  const currentColor = colorClass($(this));
-  $(this).replaceWith(
-    "<div class='task bg-white task m-0 d-flex justify-content-left align-items-center col-9 " +
-      currentColor +
-      "' maxlength='100'></div>"
-  );
-  loadTasks();
-}
 const timeBlocksContainer = $(".time-blocks-container");
 timeBlocksContainer.on("click", ".eventblock", editEvent);
-timeBlocksContainer.on("blur", ".task", normalizeEvent);
+const text = $(".eventblock");
+console.log(text[0]);
+
 const saveButton = $(".btn");
 saveButton.on("click", saveEvent);
 
