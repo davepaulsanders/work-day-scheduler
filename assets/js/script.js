@@ -4,11 +4,10 @@ $("#currentDay").text(today.toLocaleString());
 
 // event listeners and global objects
 const timeBlocksContainer = $(".time-blocks-container");
-timeBlocksContainer.on("mousedown", ".eventblock", editEvent);
 const saveButton = $(".btn");
 saveButton.on("click", saveEvent);
-// initial time set up
 
+// initial time set up
 function getTime() {
   let time = luxon.DateTime.now();
   let today2 = luxon.DateTime.fromISO(time);
@@ -22,7 +21,7 @@ function getTime() {
 function timeCall() {
   const timeInterval = setInterval(() => {
     getTime();
-  }, 10000);
+  }, 1000);
 }
 
 // Loads tasks from localStorage
@@ -84,29 +83,11 @@ function assignColors() {
   }
 }
 
-// When clicking in timeblock
-function editEvent(event) {
-  const currentText = $(this).text();
-  const classes = $(this).attr("class");
-
-  if ($(this).is("textarea")) {
-    return;
-  }
-  $(this).replaceWith(
-    "<textarea spellcheck='false' class='" +
-      classes +
-      "'>" +
-      currentText +
-      "</textarea>"
-  );
-}
 // save to local storage and add task to timeblock
 function saveEvent() {
   const eventBlock = $(this).siblings(".eventblock");
   const task = eventBlock.val().trim();
   const hour = $(this).siblings(".hour").text();
-  const classes = eventBlock.attr("class");
-  eventBlock.replaceWith("<div class='" + classes + "'>" + task + "</div>");
   const newTask = {
     hour,
     task,
