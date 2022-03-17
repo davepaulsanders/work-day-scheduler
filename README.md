@@ -6,6 +6,10 @@ This project allows users to add and remove tasks from a calender. The tasks are
 
 This project uses HTML, CSS, and Javascript along with Bootstrap and JQuery.
 
+## Live link
+
+The site is viewable at https://davepaulsanders.github.io/work-day-scheduler/
+
 ## Screenshots
 
 <img src="./assets/css/screenshot.png"/>
