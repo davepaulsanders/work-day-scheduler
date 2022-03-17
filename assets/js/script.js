@@ -1,67 +1,47 @@
+//Get today's date
 const today = luxon.DateTime.now();
 $("#currentDay").text(today.toLocaleString());
-function editEvent(event) {
-  const currentText = $(this).text();
-  const classes = $(this).attr("class");
 
-  if ($(this).is("textarea")) {
-    return;
-  }
-  $(this).replaceWith(
-    "<textarea spellcheck='false' class='" +
-      classes +
-      "'>" +
-      currentText +
-      "</textarea>"
-  );
+// event listeners and global objects
+const timeBlocksContainer = $(".time-blocks-container");
+//timeBlocksContainer.on("mousedown", ".eventblock", editEvent);
+const saveButton = $(".btn");
+saveButton.on("click", saveEvent);
+// initial time set up
+function getTime() {
+  const today2 = luxon.DateTime.fromISO(today);
+  const amOrPm = today2.hour > 11 ? "P" : "A";
+  let displayTime = `${today2.toFormat("h:mm")} ${amOrPm}M`;
+  let finalTime = `${today2.toFormat("h")}${amOrPm}M`;
+  $("#currentTime").text(displayTime);
+  return finalTime;
+}
+// time interval
+function timeCall() {
+  const timeInterval = setInterval(() => {
+    getTime();
+  }, 60000);
 }
 
-function saveEvent() {
-  const eventBlock = $(this).siblings(".eventblock");
-  const task = eventBlock.val().trim();
-  const hour = $(this).siblings(".hour").text();
-  const classes = eventBlock.attr("class");
-  eventBlock.replaceWith("<div class='" + classes + "'>" + task + "</div>");
-
-  const newTask = {
-    hour,
-    task,
-  };
-  let currentTasks = JSON.parse(localStorage.getItem("tasks"));
-  let updatedTasks;
-
-  // if that timeslot already contains something, delete it and store new one
-  for (x in currentTasks) {
-    if (currentTasks[x].hour === newTask.hour) {
-      updatedTasks = currentTasks.filter((y) => y !== currentTasks[x]);
-      updatedTasks.push(newTask);
-      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-      return;
-    }
-  }
-  if (!currentTasks) {
-    const taskArr = [];
-    taskArr.push(newTask);
-    localStorage.setItem("tasks", JSON.stringify(taskArr));
-    return;
-  }
-  currentTasks.push(newTask);
-  localStorage.setItem("tasks", JSON.stringify(currentTasks));
-  assignColors();
-}
-
+// Loads tasks from localStorage
 function loadTasks() {
-  const taskInterval = setInterval(() => {
-    console.log("updating...");
-    const savedTasks = JSON.parse(localStorage.getItem("tasks"));
-    for (obj in savedTasks) {
-      if ($(".block-" + savedTasks[obj].hour)) {
-        $(".block-" + savedTasks[obj].hour).text(savedTasks[obj].task);
-      }
+  const savedTasks = JSON.parse(localStorage.getItem("tasks"));
+  for (obj in savedTasks) {
+    if ($(".block-" + savedTasks[obj].hour)) {
+      $(".block-" + savedTasks[obj].hour).text(savedTasks[obj].task);
     }
-  }, 600000);
+  }
 }
 
+// after initial calls repeats color set up and task loading every 10 minutes
+function setIntervalLoadTasks() {
+  const timeLoop = setInterval(() => {
+    loadTasks();
+    assignColors();
+  }, 300000);
+}
+
+// assigns colors based on index of current time in relations to hoursArr comparison object
 function assignColors() {
   const hoursArr = [
     "12AM",
@@ -89,14 +69,12 @@ function assignColors() {
     "10PM",
     "11PM",
   ];
-  const today2 = luxon.DateTime.fromISO(today);
-  const amOrPm = today2.hour > 11 ? "P" : "A";
-  let finalTime = `${today2.toFormat("h")}${amOrPm}M`;
+  const currentTime = getTime();
 
   for (hour of hoursArr) {
-    if (hoursArr.indexOf(hour) === hoursArr.indexOf(finalTime)) {
+    if (hoursArr.indexOf(hour) === hoursArr.indexOf(currentTime)) {
       $(".block-" + hour).addClass("red");
-    } else if (hoursArr.indexOf(hour) < hoursArr.indexOf(finalTime)) {
+    } else if (hoursArr.indexOf(hour) < hoursArr.indexOf(currentTime)) {
       $(".block-" + hour).addClass("gray");
     } else {
       $(".block-" + hour).addClass("green");
@@ -104,19 +82,63 @@ function assignColors() {
   }
 }
 
-const timeBlocksContainer = $(".time-blocks-container");
-timeBlocksContainer.on("mousedown", ".eventblock", editEvent);
-const text = $(".eventblock");
-const saveButton = $(".btn");
-saveButton.on("click", saveEvent);
+// When clicking in timeblock
+function editEvent(event) {
+  const currentText = $(this).text();
+  const classes = $(this).attr("class");
 
+  if ($(this).is("textarea")) {
+    return;
+  }
+  $(this).replaceWith(
+    "<textarea spellcheck='false' class='" +
+      classes +
+      "'>" +
+      currentText +
+      "</textarea>"
+  );
+}
+// save to local storage and add task to timeblock
+function saveEvent() {
+  const eventBlock = $(this).siblings(".eventblock");
+  const task = eventBlock.val().trim();
+  const hour = $(this).siblings(".hour").text();
+  const classes = eventBlock.attr("class");
+  eventBlock.replaceWith("<div class='" + classes + "'>" + task + "</div>");
+  const newTask = {
+    hour,
+    task,
+  };
+  let currentTasks = JSON.parse(localStorage.getItem("tasks"));
+  let updatedTasks;
+
+  // if that timeslot already contains something, delete it and store new one
+  for (x in currentTasks) {
+    if (currentTasks[x].hour === newTask.hour) {
+      updatedTasks = currentTasks.filter((y) => y !== currentTasks[x]);
+      updatedTasks.push(newTask);
+      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+      return;
+    }
+  }
+  if (!currentTasks) {
+    const taskArr = [];
+    taskArr.push(newTask);
+    localStorage.setItem("tasks", JSON.stringify(taskArr));
+    return;
+  }
+  currentTasks.push(newTask);
+  localStorage.setItem("tasks", JSON.stringify(currentTasks));
+  assignColors();
+}
+
+// Initial time set up
+getTime();
+// setInterval for time
+timeCall();
+//Set colors to timeblocks
 assignColors();
+// load tasks initially
 loadTasks();
-
-document.addEventListener(
-  "focus",
-  function () {
-    console.log("focused: ", document.activeElement);
-  },
-  true
-);
+// set Interval to load tasks and colors
+setIntervalLoadTasks();
