@@ -1,17 +1,16 @@
 const today = luxon.DateTime.now();
 $("#currentDay").text(today.toLocaleString());
-
-function addEvent() {
+function getHourClass() {}
+function editEvent() {
   const currentText = $(this).text();
-  const currentColor = colorClass($(this));
-  $(this).replaceWith(
-    "<textarea class='task bg-white task m-0 d-flex justify-content-left align-items-center col-9 " +
-      currentColor +
-      "' maxlength='100'>" +
-      currentText +
-      "</textarea>"
+  const classes = $(this).attr("class");
+  console.log(
+    "<textarea class='" + classes + "' " + currentText + "</textarea>"
   );
-  $(".task").focus();
+  $(this).replaceWith(
+    "<textarea class='" + classes + "'>" + currentText + "</textarea>"
+  );
+  $(".eventblock").focus();
 }
 
 function colorClass(block) {
@@ -23,7 +22,6 @@ function colorClass(block) {
     return "gray";
   }
 }
-
 function saveEvent() {
   const eventBlock = $(this).siblings(".task");
   const hour = $(this).siblings(".hour").text();
@@ -65,12 +63,6 @@ function saveEvent() {
   localStorage.setItem("tasks", JSON.stringify(currentTasks));
   assignColors();
 }
-
-const timeBlocksContainer = $(".time-blocks-container");
-timeBlocksContainer.on("click", ".eventblock", addEvent);
-
-const saveButton = $(".btn");
-saveButton.on("click", saveEvent);
 
 function loadTasks() {
   const savedTasks = JSON.parse(localStorage.getItem("tasks"));
@@ -122,9 +114,21 @@ function assignColors() {
     }
   }
 }
-timeBlocksContainer.on("blur", () => {
-  $(this).removeClass("bg-white");
-  assignColors();
-});
+
+function normalizeEvent() {
+  const currentColor = colorClass($(this));
+  $(this).replaceWith(
+    "<div class='task bg-white task m-0 d-flex justify-content-left align-items-center col-9 " +
+      currentColor +
+      "' maxlength='100'></div>"
+  );
+  loadTasks();
+}
+const timeBlocksContainer = $(".time-blocks-container");
+timeBlocksContainer.on("click", ".eventblock", editEvent);
+timeBlocksContainer.on("blur", ".task", normalizeEvent);
+const saveButton = $(".btn");
+saveButton.on("click", saveEvent);
+
 assignColors();
 loadTasks();
