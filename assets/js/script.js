@@ -6,6 +6,14 @@ $("#currentDay").text(today.toLocaleString());
 const timeBlocksContainer = $(".time-blocks-container");
 const saveButton = $(".btn");
 saveButton.on("click", saveEvent);
+$(".eventblock").on("focusout", loadTasks);
+$(".eventblock").on("keypress", (event) => {
+  if (event.keyCode === 13) {
+    saveEvent(event);
+    loadTasks();
+    $(".eventblock").blur();
+  }
+});
 
 // initial time set up
 function getTime() {
@@ -84,10 +92,22 @@ function assignColors() {
 }
 
 // save to local storage and add task to timeblock
-function saveEvent() {
-  const eventBlock = $(this).siblings(".eventblock");
-  const task = eventBlock.val().trim();
-  const hour = $(this).siblings(".hour").text();
+function saveEvent(event) {
+  let eventBlock;
+  let task;
+  let hour;
+
+  // if enter was pressed
+  if (event.keyCode === 13) {
+    eventBlock = event.target;
+    task = event.target.value;
+    hour = event.target.previousSibling.previousSibling.innerHTML;
+  } else {
+    eventBlock = $(this).siblings(".eventblock");
+    task = eventBlock.val().trim();
+    hour = $(this).siblings(".hour").text();
+  }
+
   const newTask = {
     hour,
     task,
