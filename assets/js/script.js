@@ -6,7 +6,6 @@ $("#currentDay").text(today.toLocaleString());
 const timeBlocksContainer = $(".time-blocks-container");
 const saveButton = $(".btn");
 saveButton.on("click", saveEvent);
-$(".eventblock").on("focusout", loadTasks());
 $(".eventblock").on("keypress", (event) => {
   if (event.keyCode === 13) {
     saveEvent(event);
