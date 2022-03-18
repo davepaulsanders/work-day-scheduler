@@ -6,7 +6,7 @@ $("#currentDay").text(today.toLocaleString());
 const timeBlocksContainer = $(".time-blocks-container");
 const saveButton = $(".btn");
 saveButton.on("click", saveEvent);
-$(".eventblock").on("focusout", loadTasks);
+$(".eventblock").on("focusout", loadTasks());
 $(".eventblock").on("keypress", (event) => {
   if (event.keyCode === 13) {
     saveEvent(event);
@@ -41,7 +41,6 @@ function loadTasks() {
     }
   }
 }
-
 // after initial calls repeats color set up and task loading every 10 minutes
 function setIntervalLoadTasks() {
   const timeLoop = setInterval(() => {

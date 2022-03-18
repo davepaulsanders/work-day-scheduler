@@ -13,3 +13,7 @@ The site is viewable at https://davepaulsanders.github.io/work-day-scheduler/
 ## Screenshots
 
 <img src="./assets/css/screenshot.png"/>
+
+## Installation
+
+To use this project, clone the repository to your computer using HTTPS or SSH.
